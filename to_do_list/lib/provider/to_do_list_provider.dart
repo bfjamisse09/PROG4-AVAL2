@@ -66,4 +66,8 @@ class AgendaProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> delete(Contact contact) async {
+    await http.delete(Uri.parse('$_baseUrl/contacts/${contact.id}'));
+  }
 }

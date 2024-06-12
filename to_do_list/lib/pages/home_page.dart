@@ -5,6 +5,21 @@ import '../app/app_route.dart';
 import '../provider/to_do_list_provider.dart';
 import '../widgets/to_do_list_tile.dart';
 
+Widget icon = Container(
+  decoration: const BoxDecoration(color: Colors.red),
+  child: const Center(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.delete,
+          size: 30.0,
+        ),
+      ],
+    ),
+  ),
+);
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -50,7 +65,12 @@ class _HomePageState extends State<HomePage> {
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: contacts.length,
-              itemBuilder: (context, index) => ContactTile(contacts[index]),
+              itemBuilder: (context, index) => Dismissible(
+                key: Key(contacts[index].id),
+                background: icon,
+                onDismissed: (direction) {},
+                child: ContactTile(contacts[index]),
+              ),
             ),
     );
   }
