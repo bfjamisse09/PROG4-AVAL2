@@ -67,6 +67,6 @@ class ToDoListProvider with ChangeNotifier {
   }
 
   Future<void> delete(Item item) async {
-    await http.delete(Uri.parse('$_baseUrl/listItem/$item'));
+    await http.delete(Uri.parse('$_baseUrl/listItem/${item.id}.json'));
   }
 }

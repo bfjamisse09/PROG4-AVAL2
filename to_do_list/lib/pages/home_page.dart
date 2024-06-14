@@ -62,13 +62,13 @@ class _HomePageState extends State<HomePage> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.pop<bool>(ctx, true);
+                              Navigator.pop<bool>(context, true);
                             },
                             child: const Text('Sim'),
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.pop<bool>(ctx, false);
+                              Navigator.pop<bool>(context, false);
                             },
                             child: const Text('Não'),
                           ),
