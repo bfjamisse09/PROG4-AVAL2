@@ -2,32 +2,32 @@ import 'package:to_do_list/provider/to_do_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/to_do_list.dart';
+import '../models/item.dart';
 import './app_route.dart';
-import '../pages/to_do_list_page.dart';
+import '../pages/item_page.dart';
 import '../pages/home_page.dart';
 
-class AgendaApp extends StatelessWidget {
-  const AgendaApp({super.key});
+class ToDoListApp extends StatelessWidget {
+  const ToDoListApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AgendaProvider(),
+      create: (_) => ToDoListProvider(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Agenda',
+        title: 'Lista de Tarefas',
         theme: ThemeData(
           colorSchemeSeed: const Color.fromRGBO(79, 111, 82, 1.0),
         ),
         initialRoute: AppRoute.home.route,
         routes: {
           AppRoute.home.route: (_) => const HomePage(),
-          AppRoute.newContact.route: (_) => const ContactPage(contact: null),
-          AppRoute.editContact.route: (context) {
-            final contact = ModalRoute.of(context)?.settings.arguments;
-            return ContactPage(
-              contact: contact as Contact?,
+          AppRoute.newItem.route: (_) => const ItemPage(item: null),
+          AppRoute.editItem.route: (context) {
+            final item = ModalRoute.of(context)?.settings.arguments;
+            return ItemPage(
+              item: item as Item?,
             );
           }
         },

@@ -3,71 +3,70 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/to_do_list.dart';
+import '../models/item.dart';
 
-typedef ContactMap = Map<String, dynamic>;
+typedef ItemMap = Map<String, dynamic>;
 
-class AgendaProvider with ChangeNotifier {
+class ToDoListProvider with ChangeNotifier {
   final _baseUrl = 'https://todolist-prog4-default-rtdb.firebaseio.com';
 
-  final List<Contact> _contacts = [];
+  final List<Item> _listItems = [];
 
-  List<Contact> get contacts => _contacts;
+  List<Item> get listItems => _listItems;
 
   Future<void> load() async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/contacts.json'),
+      Uri.parse('$_baseUrl/listItem.json'),
     );
     final data = jsonDecode(response.body);
     data.forEach((key, value) {
-      final contact = Contact(
+      final item = Item(
         id: key,
-        name: value['name'],
-        email: value['email'],
-        phone: value['phone'],
-        imageUrl: value['imageUrl'],
+        title: value['title'],
+        description: value['description'],
+        date: value['date'],
       );
-      _contacts.add(contact);
+      _listItems.add(item);
     });
     notifyListeners();
   }
 
-  Future<void> save(Contact contact) {
-    if (contact.id.isEmpty) {
-      return insert(contact);
+  Future<void> save(Item item) {
+    if (item.id.isEmpty) {
+      return insert(item);
     } else {
-      return update(contact);
+      return update(item);
     }
   }
 
-  Future<void> insert(Contact contact) async {
+  Future<void> insert(Item item) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/contacts.json'),
-      body: contact.toJson(),
+      Uri.parse('$_baseUrl/listItem.json'),
+      body: item.toJson(),
     );
 
     final body = jsonDecode(response.body);
 
-    _contacts.add(contact.copyWith(
-      id: body['name'],
+    _listItems.add(item.copyWith(
+      id: body['title'],
     ));
     notifyListeners();
   }
 
-  Future<void> update(Contact contact) async {
+  Future<void> update(Item item) async {
     await http.put(
-      Uri.parse('$_baseUrl/contacts/${contact.id}'),
-      body: contact.toJson(),
+      Uri.parse('$_baseUrl/listItem/${item.id}'),
+      body: item.toJson(),
     );
 
-    final index = _contacts.indexWhere((elem) => elem.id == contact.id);
+    final index = _listItems.indexWhere((elem) => elem.id == item.id);
     if (index >= 0) {
-      _contacts[index] = contact;
+      _listItems[index] = item;
       notifyListeners();
     }
   }
 
-  Future<void> delete(Contact contact) async {
-    await http.delete(Uri.parse('$_baseUrl/contacts/${contact.id}'));
+  Future<void> delete(Item item) async {
+    await http.delete(Uri.parse('$_baseUrl/listItem/$item'));
   }
 }

@@ -3,22 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../app/app_route.dart';
 import '../provider/to_do_list_provider.dart';
-import '../widgets/to_do_list_tile.dart';
-
-Widget icon = Container(
-  decoration: const BoxDecoration(color: Colors.red),
-  child: const Center(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Icon(
-          Icons.delete,
-          size: 30.0,
-        ),
-      ],
-    ),
-  ),
-);
+import '../widgets/item_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    final provider = Provider.of<AgendaProvider>(context, listen: false);
+    final provider = Provider.of<ToDoListProvider>(context, listen: false);
     provider.load().then(
       (_) {
         setState(() {
@@ -46,17 +31,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final contacts =
-        Provider.of<AgendaProvider>(context, listen: true).contacts;
+    final items =
+        Provider.of<ToDoListProvider>(context, listen: true).listItems;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contatos'),
+        title: const Text('Tarefas'),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(AppRoute.newContact.route);
+          Navigator.of(context).pushNamed(AppRoute.newItem.route);
         },
         backgroundColor: Theme.of(context).primaryColor,
         child: const Icon(Icons.add),
@@ -64,12 +49,40 @@ class _HomePageState extends State<HomePage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: contacts.length,
+              itemCount: items.length,
               itemBuilder: (context, index) => Dismissible(
-                key: Key(contacts[index].id),
-                background: icon,
-                onDismissed: (direction) {},
-                child: ContactTile(contacts[index]),
+                key: GlobalKey(),
+                confirmDismiss: (_) {
+                  return showDialog<bool>(
+                    context: context,
+                    builder: (ctx) {
+                      return AlertDialog(
+                        title: const Text('Confirmação'),
+                        content: const Text('Confirma a remoção do contato?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop<bool>(ctx, true);
+                            },
+                            child: const Text('Sim'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop<bool>(ctx, false);
+                            },
+                            child: const Text('Não'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                onDismissed: (_) {
+                  final provider =
+                      Provider.of<ToDoListProvider>(context, listen: false);
+                  provider.delete(items[index]);
+                },
+                child: ItemTile(items[index]),
               ),
             ),
     );
