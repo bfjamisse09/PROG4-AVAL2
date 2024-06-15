@@ -13,6 +13,25 @@ class ItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime itemDate = DateTime.parse(item.date);
+    final Duration difference = DateTime.now().difference(itemDate);
+    final int differenceInDays = difference.inDays;
+
+    String formatDaysDifference(int days) {
+      if (days == 0) {
+        return 'hoje';
+      } else if (days == 1) {
+        return '1 dia atrás';
+      } else if (days < 0) {
+        return '${-days} dias restantes';
+      } else {
+        return '$days dias atrás';
+      }
+    }
+
+    final String dateDifference = formatDaysDifference(differenceInDays);
+    final bool isPast = differenceInDays > 0;
+
     return ListTile(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -28,7 +47,12 @@ class ItemTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Descrição: ${item.description}'),
-          Text('Data: ${item.date}'),
+          Text(
+            'Vencimento: $dateDifference',
+            style: TextStyle(
+              color: isPast ? Colors.red : Colors.black,
+            ),
+          ),
           Text('Categoria: ${item.category}'),
         ],
       ),

@@ -55,7 +55,8 @@ class _ItemPageState extends State<ItemPage> {
     );
     if (picked != null) {
       setState(() {
-        _dateController.text = "${picked.toLocal()}".split(' ')[0]; // Format the date
+        _dateController.text =
+            "${picked.toLocal()}".split(' ')[0]; // Format the date
       });
     }
   }
@@ -149,7 +150,8 @@ class _ItemPageState extends State<ItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = Provider.of<ToDoListProvider>(context, listen: true).categoryItems;
+    final categories =
+        Provider.of<ToDoListProvider>(context, listen: true).categoryItems;
     String dropdownValue = categories.last;
     return Scaffold(
       appBar: AppBar(
