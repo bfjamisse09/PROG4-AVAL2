@@ -11,8 +11,10 @@ class ToDoListProvider with ChangeNotifier {
   final _baseUrl = 'https://todolist-7ff7f-default-rtdb.firebaseio.com';
 
   final List<Item> _listItems = [];
+  final List<String> _categoryList = ["Afazeres Domésticos", "Trabalho", "Escola", "Outros"];
 
   List<Item> get listItems => _listItems;
+  List<String> get categoryItems => _categoryList;
 
   Future<void> load() async {
     final response = await http.get(

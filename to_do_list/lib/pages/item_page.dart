@@ -126,6 +126,9 @@ class _ItemPageState extends State<ItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    final categories =
+        Provider.of<ToDoListProvider>(context, listen: true).categoryItems;
+    String dropdownValue = categories.last;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Novo Item'),
@@ -165,13 +168,17 @@ class _ItemPageState extends State<ItemPage> {
                           controller: _dateController,
                           validator: _dateValidator,
                         ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Categoria',
-                          ),
-                          controller: _categoryController,
-                          validator: _categoryValidator,
-                        ),
+                        DropdownButton(value:dropdownValue, items:categories.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(), onChanged: (String? value) {
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value!;
+        });
+      })
                       ],
                     ),
                   ),
