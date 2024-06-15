@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (ctx) {
                       return AlertDialog(
                         title: const Text('Confirmação'),
-                        content: const Text('Confirma a remoção do contato?'),
+                        content: const Text('Confirmar a remoção do item?'),
                         actions: [
                           TextButton(
                             onPressed: () {

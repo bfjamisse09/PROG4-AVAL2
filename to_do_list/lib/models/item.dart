@@ -7,12 +7,14 @@ class Item {
   final String title;
   final String description;
   final String date;
+  final String category;
 
   Item({
     required this.id,
     required this.title,
     required this.description,
     required this.date,
+    required this.category,
   });
 
   @override
@@ -25,12 +27,14 @@ class Item {
     String? title,
     String? description,
     String? date,
+    String? category,
   }) =>
       Item(
         id: id ?? this.id,
         title: title ?? this.title,
         description: description ?? this.description,
         date: date ?? this.date,
+        category: category ?? this.category,
       );
 
   ItemMap toMap([bool excludeId = true]) {
@@ -39,6 +43,7 @@ class Item {
       'title': title,
       'description': description,
       'date': date,
+      'category': category,
     };
   }
 

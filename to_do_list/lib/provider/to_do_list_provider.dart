@@ -8,7 +8,7 @@ import '../models/item.dart';
 typedef ItemMap = Map<String, dynamic>;
 
 class ToDoListProvider with ChangeNotifier {
-  final _baseUrl = 'https://todolist-prog4-default-rtdb.firebaseio.com';
+  final _baseUrl = 'https://todolist-7ff7f-default-rtdb.firebaseio.com';
 
   final List<Item> _listItems = [];
 
@@ -25,6 +25,7 @@ class ToDoListProvider with ChangeNotifier {
         title: value['title'],
         description: value['description'],
         date: value['date'],
+        category: value['category'],
       );
       _listItems.add(item);
     });
@@ -32,7 +33,7 @@ class ToDoListProvider with ChangeNotifier {
   }
 
   Future<void> save(Item item) {
-    if (item.id.isEmpty) {
+    if (item.id == '') {
       return insert(item);
     } else {
       return update(item);
@@ -50,12 +51,13 @@ class ToDoListProvider with ChangeNotifier {
     _listItems.add(item.copyWith(
       id: body['title'],
     ));
+    _debugPrintListItems();
     notifyListeners();
   }
 
   Future<void> update(Item item) async {
     await http.put(
-      Uri.parse('$_baseUrl/listItem/${item.id}'),
+      Uri.parse('$_baseUrl/listItem/${item.id}.json'),
       body: item.toJson(),
     );
 
@@ -67,6 +69,32 @@ class ToDoListProvider with ChangeNotifier {
   }
 
   Future<void> delete(Item item) async {
-    await http.delete(Uri.parse('$_baseUrl/listItem/${item.id}.json'));
+    final url = Uri.parse('$_baseUrl/listItem/${item.id}.json');
+    print('Deleting item with URL: $url'); // Log the URL
+
+    try {
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        print('Response: ${response.body}'); // Log the response body
+        // Successfully deleted from Firebase, now remove from local list
+        _listItems.removeWhere((listItem) => listItem.id == item.id);
+        _debugPrintListItems();
+        notifyListeners();
+      } else {
+        // Handle errors, log the response for debugging
+        print('Failed to delete item: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (error) {
+      print('Error deleting item: $error'); // Log any errors
+    }
+  }
+
+  void _debugPrintListItems() {
+    for (var listItem in _listItems) {
+      debugPrint(listItem.toString());
+    }
+    debugPrint("-----");
   }
 }

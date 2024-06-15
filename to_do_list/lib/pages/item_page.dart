@@ -21,6 +21,7 @@ class _ItemPageState extends State<ItemPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _dateController = TextEditingController();
+  final _categoryController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -33,6 +34,7 @@ class _ItemPageState extends State<ItemPage> {
     _titleController.text = item?.title ?? '';
     _descriptionController.text = item?.description ?? '';
     _dateController.text = item?.date ?? '';
+    _categoryController.text = item?.category ?? '';
   }
 
   void _formSubmit(BuildContext context) async {
@@ -45,6 +47,7 @@ class _ItemPageState extends State<ItemPage> {
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
       date: _dateController.text.trim(),
+      category: _categoryController.text.trim(),
     );
 
     final provider = Provider.of<ToDoListProvider>(
@@ -82,12 +85,40 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   String? _dateValidator(String? text) {
+    if (text == null || text.isEmpty) {
+      return 'Por favor, insira uma data.';
+    }
+
+    final datePattern = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (!datePattern.hasMatch(text)) {
+      return 'Formato de data inválido. Use mm/dd/yyyy';
+    }
+
+    final parts = text.split('/');
+    final month = int.tryParse(parts[0]);
+    final day = int.tryParse(parts[1]);
+    final year = int.tryParse(parts[2]);
+
+    if (month == null || day == null || year == null) {
+      return 'Data inválida.';
+    }
+
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+      return 'Data inválida.';
+    }
+
+    // Aqui você pode adicionar validações adicionais, como verificar se o ano é bissexto
+
+    return null;
+  }
+
+  String? _categoryValidator(String? text) {
     final error = _titleValidator(text);
     if (error != null) {
       return error;
     }
-    if (int.tryParse(text!) == null) {
-      return 'Data Inválida';
+    if ((text == null) || text.isEmpty) {
+      return 'Este campo é obrigatório';
     }
 
     return null;
@@ -133,6 +164,13 @@ class _ItemPageState extends State<ItemPage> {
                           ),
                           controller: _dateController,
                           validator: _dateValidator,
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Categoria',
+                          ),
+                          controller: _categoryController,
+                          validator: _categoryValidator,
                         ),
                       ],
                     ),

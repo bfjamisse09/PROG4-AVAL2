@@ -27,8 +27,9 @@ class ItemTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(item.description),
-          Text(item.date),
+          Text('Descrição: ${item.description}'),
+          Text('Data: ${item.date}'),
+          Text('Categoria: ${item.category}'),
         ],
       ),
     );
